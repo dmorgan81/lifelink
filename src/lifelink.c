@@ -31,6 +31,7 @@ static void select_long_click_handler(ClickRecognizerRef recognizer, void *conte
     player_set_life(player_one, PLAYER_STARTING_LIFE);
     player_set_life(player_two, PLAYER_STARTING_LIFE);
     current_player = player_one;
+    layout_group_select_player(layout_group, current_player);
     layout_group_mark_dirty(layout_group);
     vibes_short_pulse();
 }
