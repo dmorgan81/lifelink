@@ -1,0 +1,32 @@
+{
+  "uuid": "7d02578f-6da7-4cf2-a1b3-25b565710bcb",
+  "shortName": "Lifelink",
+  "longName": "Lifelink",
+  "companyName": "dmorgan81@gmail.com",
+  "versionLabel": "1.0",
+  "sdkVersion": "3",
+  "targetPlatforms": ["aplite"],
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {},
+  "resources": {
+    "media": [
+      {
+        "type": "png",
+        "name": "LIFE_UP",
+        "file": "action_bar_icon_up.png"
+      },
+      {
+        "type": "png",
+        "name": "LIFE_DOWN",
+        "file": "action_bar_icon_down.png"
+      },
+      {
+        "type": "png",
+        "name": "SWAP_PLAYER",
+        "file": "action_bar_icon_edit.png"
+      }
+    ]
+  }
+}
