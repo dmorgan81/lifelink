@@ -4,7 +4,7 @@
 #include "layout.h"
 #include "player.h"
 
-#ifdef PBL_PLATFORM_APLITE
+#ifdef PBL_RECT
 
 typedef struct Extras {
     EffectLayer *effect_layer;
