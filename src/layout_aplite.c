@@ -102,7 +102,7 @@ void layout_group_add_to_window(LayoutGroup *layout_group, Window *window) {
     GRect bounds = layer_get_bounds(window_layer);
 
     int16_t width = bounds.size.w - ACTION_BAR_WIDTH - 5;
-    int16_t height = (bounds.size.h / 2) - (STATUS_BAR_LAYER_HEIGHT / 2);
+    int16_t height = bounds.size.h / 2;
 
     layout_set_frame(layout_group->player_one_layout, GRect(0, 0, width, height));
     layout_set_frame(layout_group->player_two_layout, GRect(0, height, width, height));

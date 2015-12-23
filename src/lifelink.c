@@ -32,6 +32,7 @@ static void select_long_click_handler(ClickRecognizerRef recognizer, void *conte
     player_set_life(player_two, PLAYER_STARTING_LIFE);
     current_player = player_one;
     layout_group_mark_dirty(layout_group);
+    vibes_short_pulse();
 }
 
 static void click_config_provider(void *context) {
@@ -43,6 +44,10 @@ static void click_config_provider(void *context) {
 }
 
 static void main_window_load(Window *window) {
+#ifdef PBL_PLATFORM_APLITE
+    window_set_fullscreen(window, true);
+#endif
+
     player_one = create_player("Player One");
     player_two = create_player("Player Two");
     current_player = player_one;

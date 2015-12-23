@@ -2,10 +2,6 @@
 #include <pebble.h>
 #include "player.h"
 
-#ifndef STATUS_BAR_LAYER_HEIGHT
-#define STATUS_BAR_LAYER_HEIGHT PBL_IF_RECT_ELSE(16, 24)
-#endif
-
 typedef struct Layout {
     Player *player;
     Layer *group_layer;
