@@ -49,8 +49,16 @@ static void main_window_load(Window *window) {
     window_set_fullscreen(window, true);
 #endif
 
-    player_one = create_player("Player One");
-    player_two = create_player("Player Two");
+    if (player_exists_in_storage(PLAYER_ONE_STORAGE_KEY))
+        player_one = player_read_from_storage(PLAYER_ONE_STORAGE_KEY);
+    else
+        player_one = create_player("Player One");
+
+    if (player_exists_in_storage(PLAYER_TWO_STORAGE_KEY))
+        player_two = player_read_from_storage(PLAYER_TWO_STORAGE_KEY);
+    else
+        player_two = create_player("Player Two");
+
     current_player = player_one;
 
     action_bar = action_bar_create();
@@ -65,6 +73,9 @@ static void main_window_unload(Window *window) {
     action_bar_destroy(action_bar);
 
     layout_group_destroy(layout_group);
+
+    player_write_to_storage(player_one, PLAYER_ONE_STORAGE_KEY);
+    player_write_to_storage(player_two, PLAYER_TWO_STORAGE_KEY);
 
     destroy_player(player_one);
     destroy_player(player_two);
