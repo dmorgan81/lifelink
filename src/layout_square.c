@@ -116,8 +116,10 @@ void layout_group_add_to_window(LayoutGroup *layout_group, Window *window) {
 }
 
 static void animation_stopped(Animation *animation, bool finished, void *data) {
+#ifdef PBL_PLATFORM_APLITE
     Extras *extras = (Extras *) data;
     property_animation_destroy(extras->animation);
+#endif
 }
 
 void layout_group_select_player(LayoutGroup *layout_group, Player *player) {
