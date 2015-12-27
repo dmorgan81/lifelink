@@ -49,6 +49,8 @@ static void main_window_load(Window *window) {
     window_set_fullscreen(window, true);
 #endif
 
+    window_set_background_color(window, GColorBlack);
+
     if (player_exists_in_storage(PLAYER_ONE_STORAGE_KEY))
         player_one = player_read_from_storage(PLAYER_ONE_STORAGE_KEY);
     else

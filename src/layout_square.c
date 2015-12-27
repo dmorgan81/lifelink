@@ -31,11 +31,15 @@ static Layout *layout_create(Player *player) {
     layout->life_layer = text_layer_create(GRectZero);
     text_layer_set_font(layout->life_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));
     text_layer_set_text_alignment(layout->life_layer, GTextAlignmentRight);
+    text_layer_set_background_color(layout->life_layer, GColorClear);
+    text_layer_set_text_color(layout->life_layer, GColorWhite);
     layout_update_life_layer(layout);
     layer_add_child(layout->group_layer, text_layer_get_layer(layout->life_layer));
 
     layout->name_layer = text_layer_create(GRectZero);
     text_layer_set_text_alignment(layout->name_layer, GTextAlignmentRight);
+    text_layer_set_background_color(layout->name_layer, GColorClear);
+    text_layer_set_text_color(layout->name_layer, GColorWhite);
     text_layer_set_text(layout->name_layer, player->name);
     layer_add_child(layout->group_layer, text_layer_get_layer(layout->name_layer));
 
@@ -101,7 +105,7 @@ void layout_group_add_to_window(LayoutGroup *layout_group, Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
-    int16_t width = bounds.size.w - ACTION_BAR_WIDTH - 5;
+    int16_t width = bounds.size.w - ACTION_BAR_WIDTH;
     int16_t height = bounds.size.h / 2;
 
     layout_set_frame(layout_group->player_one_layout, GRect(0, 0, width, height));

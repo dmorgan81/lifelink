@@ -1,6 +1,6 @@
 #include "player.h"
 
-#define _PLAYER_LIFE_BUFFER_SIZE 3
+#define _PLAYER_LIFE_BUFFER_SIZE 4
 
 Player *create_player(char *name) {
     Player *player = malloc(sizeof(Player));
