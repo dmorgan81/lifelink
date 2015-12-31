@@ -2,20 +2,17 @@
 
 #define _PLAYER_LIFE_BUFFER_SIZE 4
 
-Player *create_player(char *name) {
+
+Player *player_create(char *name) {
     Player *player = malloc(sizeof(Player));
 
-    size_t buf_size = sizeof(char) * PERSIST_STRING_MAX_LENGTH;
-    char *buf = malloc(buf_size);
-    strncpy(buf, name, buf_size);
-
-    player->name = buf;
+    player_set_name(player, name);
     player->life_text = malloc(sizeof(char) * _PLAYER_LIFE_BUFFER_SIZE);
     player_set_life(player, PLAYER_STARTING_LIFE);
     return player;
 }
 
-void destroy_player(Player *player) {
+void player_destroy(Player *player) {
     free(player->name);
     free(player->life_text);
     free(player);
@@ -29,6 +26,15 @@ void player_set_life(Player *player, int16_t life) {
     if (life > PLAYER_MAX_LIFE || life < PLAYER_MIN_LIFE) return;
     player->life = life;
     player_update_life_text(player);
+}
+
+void player_set_name(Player *player, const char *name) {
+    if (player->name) free(player->name);
+
+    size_t buf_size = sizeof(char) * PERSIST_STRING_MAX_LENGTH;
+    char *buf = malloc(buf_size);
+    strncpy(buf, name, buf_size);
+    player->name = buf;
 }
 
 void player_modify_life(Player *player, int16_t life) {
@@ -49,7 +55,7 @@ Player *player_read_from_storage(uint32_t key) {
     char buf[PERSIST_STRING_MAX_LENGTH];
 
     persist_read_string(name_key, buf,  sizeof(char) * PERSIST_STRING_MAX_LENGTH);
-    Player *player = create_player(buf);
+    Player *player = player_create(buf);
     player_set_life(player, persist_read_int(key));
     return player;
 }

@@ -3,10 +3,12 @@
 #include "layout.h"
 #include "player.h"
 #include "action_bar.h"
+#include "config_listener.h"
 
 static Window *main_window;
 static ActionBar *action_bar;
 static LayoutGroup *layout_group;
+static ConfigListener *config_listener;
 
 static Player *player_one;
 static Player *player_two;
@@ -54,12 +56,12 @@ static void main_window_load(Window *window) {
     if (player_exists_in_storage(PLAYER_ONE_STORAGE_KEY))
         player_one = player_read_from_storage(PLAYER_ONE_STORAGE_KEY);
     else
-        player_one = create_player("Player One");
+        player_one = player_create("Player One");
 
     if (player_exists_in_storage(PLAYER_TWO_STORAGE_KEY))
         player_two = player_read_from_storage(PLAYER_TWO_STORAGE_KEY);
     else
-        player_two = create_player("Player Two");
+        player_two = player_create("Player Two");
 
     current_player = player_one;
 
@@ -69,9 +71,13 @@ static void main_window_load(Window *window) {
 
     layout_group = layout_group_create(player_one, player_two);
     layout_group_add_to_window(layout_group, window);
+
+    config_listener = config_listener_create(layout_group);
 }
 
 static void main_window_unload(Window *window) {
+    config_listener_destroy(config_listener);
+
     action_bar_destroy(action_bar);
 
     layout_group_destroy(layout_group);
@@ -79,8 +85,8 @@ static void main_window_unload(Window *window) {
     player_write_to_storage(player_one, PLAYER_ONE_STORAGE_KEY);
     player_write_to_storage(player_two, PLAYER_TWO_STORAGE_KEY);
 
-    destroy_player(player_one);
-    destroy_player(player_two);
+    player_destroy(player_one);
+    player_destroy(player_two);
 }
 
 static void handle_init() {

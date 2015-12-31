@@ -16,8 +16,9 @@ typedef struct Player {
     char *name;
 } Player;
 
-Player *create_player(char *name);
-void destroy_player(Player *player);
+Player *player_create(char *name);
+void player_destroy(Player *player);
+void player_set_name(Player *player, const char *name);
 void player_set_life(Player *player, int16_t life);
 void player_modify_life(Player *player, int16_t life);
 bool player_exists_in_storage(uint32_t key);

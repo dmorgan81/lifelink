@@ -23,6 +23,11 @@ static void layout_update_life_layer(Layout *layout) {
     text_layer_set_text(layout->life_layer, player->life_text);
 }
 
+static void layout_update_name_layer(Layout *layout) {
+    Player *player = layout->player;
+    text_layer_set_text(layout->name_layer, player->name);
+}
+
 static Layout *layout_create(Player *player) {
     Layout *layout = malloc(sizeof(Layout));
     layout->player = player;
@@ -40,7 +45,7 @@ static Layout *layout_create(Player *player) {
     text_layer_set_text_alignment(layout->name_layer, GTextAlignmentRight);
     text_layer_set_background_color(layout->name_layer, GColorClear);
     text_layer_set_text_color(layout->name_layer, GColorWhite);
-    text_layer_set_text(layout->name_layer, player->name);
+    layout_update_name_layer(layout);
     layer_add_child(layout->group_layer, text_layer_get_layer(layout->name_layer));
 
     return layout;
@@ -85,6 +90,7 @@ void layout_group_destroy(LayoutGroup *layout_group) {
 
 static void layout_mark_dirty(Layout *layout) {
     layout_update_life_layer(layout);
+    layout_update_name_layer(layout);
     layer_mark_dirty(layout->group_layer);
 }
 
@@ -143,6 +149,7 @@ void layout_group_select_player(LayoutGroup *layout_group, Player *player) {
 void layout_group_update_player(LayoutGroup *layout_group, Player *player) {
     Layout *layout = layout_group_find_layout(layout_group, player);
     layout_update_life_layer(layout);
+    layout_update_name_layer(layout);
 }
 
 #endif

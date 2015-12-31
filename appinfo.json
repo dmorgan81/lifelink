@@ -3,13 +3,17 @@
   "shortName": "Lifelink",
   "longName": "Lifelink",
   "companyName": "dmorgan81@gmail.com",
-  "versionLabel": "1.0",
+  "versionLabel": "1.1",
   "sdkVersion": "3",
   "targetPlatforms": ["aplite", "basalt"],
   "watchapp": {
     "watchface": false
   },
-  "appKeys": {},
+  "capabilities": [ "configurable" ],
+  "appKeys": {
+      "Player One Name" : 1,
+      "Player Two Name" : 2
+  },
   "resources": {
     "media": [
       {
