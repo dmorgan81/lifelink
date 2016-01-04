@@ -22,3 +22,4 @@ void layout_group_add_to_window(LayoutGroup *layout_group, Window *window);
 void layout_group_select_player(LayoutGroup *layout_group, Player *player);
 void layout_group_update_player(LayoutGroup *layout_group, Player *player);
 uint32_t layout_group_round_time_tick(LayoutGroup *layout_group);
+void layout_group_reset_round(LayoutGroup *layout_group);

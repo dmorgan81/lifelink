@@ -14,6 +14,19 @@ static Player *player_one;
 static Player *player_two;
 static Player *current_player;
 
+static void reset_game() {
+    player_set_life(player_one, PLAYER_STARTING_LIFE);
+    player_set_life(player_two, PLAYER_STARTING_LIFE);
+    current_player = player_one;
+    layout_group_select_player(layout_group, current_player);
+    layout_group_mark_dirty(layout_group);
+}
+
+static void select_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
+    reset_game();
+    vibes_short_pulse();
+}
+
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
     current_player = (current_player == player_one ? player_two : player_one);
     layout_group_select_player(layout_group, current_player);
@@ -30,18 +43,17 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
-    player_set_life(player_one, PLAYER_STARTING_LIFE);
-    player_set_life(player_two, PLAYER_STARTING_LIFE);
-    current_player = player_one;
-    layout_group_select_player(layout_group, current_player);
-    layout_group_mark_dirty(layout_group);
-    vibes_short_pulse();
+    layout_group_reset_round(layout_group);
+    reset_game();
+    vibes_long_pulse();
 }
 
 static void click_config_provider(void *context) {
     window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-    window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-    window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+    window_single_repeating_click_subscribe(BUTTON_ID_UP, 50, up_click_handler);
+    window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 50, down_click_handler);
+
+    window_multi_click_subscribe(BUTTON_ID_SELECT, 2, 0, 0, true, select_multi_click_handler);
 
     window_long_click_subscribe(BUTTON_ID_SELECT, 0, select_long_click_handler, NULL);
 }

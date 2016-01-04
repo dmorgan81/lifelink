@@ -187,4 +187,9 @@ uint32_t layout_group_round_time_tick(LayoutGroup *layout_group) {
     return round_time_layer_tick(round_time_layer);
 }
 
+void layout_group_reset_round(LayoutGroup *layout_group) {
+    RoundTimeLayer *round_time_layer = ((Extras *) layout_group->extras)->round_time_layer;
+    round_time_layer_set_time_left(round_time_layer, ROUND_TIME_DEFAULT_LENGTH);
+}
+
 #endif
