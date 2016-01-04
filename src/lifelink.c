@@ -46,6 +46,14 @@ static void click_config_provider(void *context) {
     window_long_click_subscribe(BUTTON_ID_SELECT, 0, select_long_click_handler, NULL);
 }
 
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+    long time_left = layout_group_round_time_tick(layout_group);
+    if (time_left <= 0) {
+        tick_timer_service_unsubscribe();
+        vibes_long_pulse();
+    }
+}
+
 static void main_window_load(Window *window) {
     window_set_background_color(window, GColorBlack);
 
@@ -72,6 +80,8 @@ static void main_window_load(Window *window) {
 }
 
 static void main_window_unload(Window *window) {
+    tick_timer_service_unsubscribe();
+
     config_listener_destroy(config_listener);
 
     action_bar_destroy(action_bar);
@@ -85,11 +95,22 @@ static void main_window_unload(Window *window) {
     player_destroy(player_two);
 }
 
+static void focus_handler(bool focus) {
+    if (focus) {
+        tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+        app_focus_service_unsubscribe();
+    }
+}
+
 static void handle_init() {
     main_window = window_create();
     window_set_window_handlers(main_window, (WindowHandlers) {
         .load = main_window_load,
         .unload = main_window_unload
+    });
+
+    app_focus_service_subscribe_handlers((AppFocusHandlers) {
+        .did_focus = focus_handler
     });
 
     window_stack_push(main_window, true);
