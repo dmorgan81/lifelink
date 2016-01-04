@@ -17,23 +17,23 @@
   "resources": {
     "media": [
       {
-        "type": "png",
+        "type": "bitmap",
         "name": "IMAGE_MENU_ICON",
         "menuIcon": true,
         "file": "lifelink_icon.png"
       },
       {
-        "type": "png",
+        "type": "bitmap",
         "name": "LIFE_UP",
         "file": "action_bar_icon_up.png"
       },
       {
-        "type": "png",
+        "type": "bitmap",
         "name": "LIFE_DOWN",
         "file": "action_bar_icon_down.png"
       },
       {
-        "type": "png",
+        "type": "bitmap",
         "name": "SWAP_PLAYER",
         "file": "action_bar_icon_edit.png"
       }
