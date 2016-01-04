@@ -4,6 +4,7 @@
 #include "layout.h"
 #include "player.h"
 #include "round_time_layer.h"
+#include "storage.h"
 
 #ifdef PBL_RECT
 
@@ -80,6 +81,13 @@ LayoutGroup *layout_group_create(Player *player_one, Player* player_two) {
     extras->effect_layer = effect_layer;
 
     round_time_layer = round_time_layer_create();
+    if (persist_exists(STORAGE_ROUND_TIME_KEY) && persist_exists(STORAGE_LAST_RUN_KEY)) {
+         int32_t time_left = persist_read_int(STORAGE_ROUND_TIME_KEY);
+         int32_t last_run = persist_read_int(STORAGE_LAST_RUN_KEY) * 1000;
+         int32_t now = time(NULL) * 1000;
+         time_left -= (now - last_run);
+         if (time_left > 0) round_time_layer_set_time_left(round_time_layer, time_left);
+    }
     extras->round_time_layer = round_time_layer;
 
     return layout_group;
@@ -98,6 +106,9 @@ void layout_group_destroy(LayoutGroup *layout_group) {
     layout_destroy(layout_group->player_two_layout);
 
     Extras *extras = (Extras *) layout_group->extras;
+    persist_write_int(STORAGE_ROUND_TIME_KEY, extras->round_time_layer->time_left);
+    persist_write_int(STORAGE_LAST_RUN_KEY, time(NULL));
+
     effect_layer_destroy(extras->effect_layer);
     round_time_layer_destroy(extras->round_time_layer);
 
@@ -171,7 +182,7 @@ void layout_group_update_player(LayoutGroup *layout_group, Player *player) {
     layout_update_name_layer(layout);
 }
 
-long layout_group_round_time_tick(LayoutGroup *layout_group) {
+uint32_t layout_group_round_time_tick(LayoutGroup *layout_group) {
     RoundTimeLayer *round_time_layer = ((Extras *) layout_group->extras)->round_time_layer;
     return round_time_layer_tick(round_time_layer);
 }
