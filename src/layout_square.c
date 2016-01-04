@@ -6,6 +6,12 @@
 
 #ifdef PBL_RECT
 
+#define _PLAYER_LIFE_BUFFER_SIZE 4
+
+typedef struct GroupLayerExtras {
+    char life_buf[_PLAYER_LIFE_BUFFER_SIZE];
+} GroupLayerExtras;
+
 typedef struct Extras {
     EffectLayer *effect_layer;
     PropertyAnimation *animation;
@@ -20,7 +26,9 @@ static Layout* layout_group_find_layout(LayoutGroup *layout_group, Player *playe
 
 static void layout_update_life_layer(Layout *layout) {
     Player *player = layout->player;
-    text_layer_set_text(layout->life_layer, player->life_text);
+    char *buf = ((GroupLayerExtras *) layer_get_data(layout->group_layer))->life_buf;
+    snprintf(buf, sizeof(char) * _PLAYER_LIFE_BUFFER_SIZE, "%d", player->life);
+    text_layer_set_text(layout->life_layer, buf);
 }
 
 static void layout_update_name_layer(Layout *layout) {
@@ -31,7 +39,7 @@ static void layout_update_name_layer(Layout *layout) {
 static Layout *layout_create(Player *player) {
     Layout *layout = malloc(sizeof(Layout));
     layout->player = player;
-    layout->group_layer = layer_create(GRectZero);
+    layout->group_layer = layer_create_with_data(GRectZero, sizeof(GroupLayerExtras));
 
     layout->life_layer = text_layer_create(GRectZero);
     text_layer_set_font(layout->life_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));

@@ -12,7 +12,6 @@
 
 typedef struct Player {
     int16_t life;
-    char *life_text;
     char *name;
 } Player;
 
