@@ -7,7 +7,11 @@ static void action_bar_load_icons(ActionBar *action_bar) {
     action_bar->icons[2] = gbitmap_create_with_resource(RESOURCE_ID_SWAP_PLAYER);
 
     action_bar_layer_set_icon(action_bar->layer, BUTTON_ID_UP, action_bar->icons[0]);
+    action_bar_layer_set_icon_press_animation(action_bar->layer, BUTTON_ID_UP, ActionBarLayerIconPressAnimationMoveUp);
+
     action_bar_layer_set_icon(action_bar->layer, BUTTON_ID_DOWN, action_bar->icons[1]);
+    action_bar_layer_set_icon_press_animation(action_bar->layer, BUTTON_ID_DOWN, ActionBarLayerIconPressAnimationMoveDown);
+
     action_bar_layer_set_icon(action_bar->layer, BUTTON_ID_SELECT, action_bar->icons[2]);
 }
 
