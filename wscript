@@ -37,5 +37,12 @@ def build(ctx):
         else:
             binaries.append({'platform': p, 'app_elf': app_elf})
 
+    config_html=ctx.path.make_node('src/config.html')
+    config_js=ctx.path.get_bld().make_node('src/js/config.js')
+    ctx(rule='(echo "var html = \\"$(cat ${SRC} | base64 -w 0)\\";") > ${TGT}', source=config_html, target=config_js)
+
+    src_js=ctx.path.make_node('src/js/lifelink.js')
+    build_js=ctx.path.get_bld().make_node('src/js/pebble-js-app.js')
+    ctx(rule='(cat ${SRC} > ${TGT})', source=[config_js, src_js], target=build_js)
     ctx.set_group('bundle')
-    ctx.pbl_bundle(binaries=binaries, js=ctx.path.ant_glob('src/js/**/*.js'))
+    ctx.pbl_bundle(binaries=binaries, js=build_js)

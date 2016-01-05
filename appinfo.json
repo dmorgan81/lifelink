@@ -11,8 +11,8 @@
   },
   "capabilities": [ "configurable" ],
   "appKeys": {
-      "Player One Name" : 1,
-      "Player Two Name" : 2
+      "name-p1" : 1,
+      "name-p2" : 2
   },
   "resources": {
     "media": [

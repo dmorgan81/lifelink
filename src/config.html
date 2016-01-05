@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <link href="https://cdn.rawgit.com/pebble/slate/v0.0.3/dist/css/slate.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.rawgit.com/pebble/slate/v0.0.3/dist/js/slate.min.js"></script>
+</head>
+<body>
+    <form>
+        <div class="item-container">
+            <div class="item-container-header">Names</div>
+            <div class="item-container-content">
+                <label class="item">
+                    <div class="item-input-wrapper">
+                        <input type="text" class="item-input" name="name-p1" placeholder="Player One">
+                    </div>
+                </label>
+                <label class="item">
+                    <div class="item-input-wrapper">
+                        <input type="text" class="item-input" name="name-p2" placeholder="Player Two">
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="item-container">
+            <div class="button-container">
+                <input id="save" type="button" class="item-button" value="SAVE"></input>
+            </div>
+        </div>
+    </form>
+    <script>
+        $(function() {
+            $('#save').click(function() {
+                var o = {};
+                var a = $('form').serializeArray();
+                $.each(a, function() {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) o[this.name] = [o[this.name]];
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                console.log(o);
+                var s = JSON.stringify(o);
+                if (window.location.hash != '#dev') window.location = 'pebblejs://close#' + encodeURIComponent(s);
+                else localStorage.setItem('config', s);
+            });
+
+            var config;
+            if (window.location.hash != '#dev') {
+                config = JSON.parse('REPLACE_ME');
+            } else {
+                config = JSON.parse(localStorage.getItem('config') || '{}');
+            }
+            $.each(config, function(k, v) {
+                var c = $('input[name=' + k + ']');
+                switch (c.attr('type')) {
+                    case 'text':
+                    case 'hidden':
+                        c.val(v);
+                        break;
+                    case 'radio':
+                    case 'checkbox':
+                        c.each(function() { if ($(this).attr('value')  == v) $(this).attr('checked', v); });
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
