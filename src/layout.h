@@ -1,6 +1,7 @@
 #pragma once
 #include <pebble.h>
 #include "player.h"
+#include "round_time_layer.h"
 
 typedef struct Layout {
     Player *player;
@@ -12,6 +13,7 @@ typedef struct Layout {
 typedef struct LayoutGroup {
     Layout* player_one_layout;
     Layout* player_two_layout;
+    RoundTimeLayer *round_time_layer;
     void *extras;
 } LayoutGroup;
 
@@ -21,5 +23,3 @@ void layout_group_mark_dirty(LayoutGroup *layout_group);
 void layout_group_add_to_window(LayoutGroup *layout_group, Window *window);
 void layout_group_select_player(LayoutGroup *layout_group, Player *player);
 void layout_group_update_player(LayoutGroup *layout_group, Player *player);
-uint32_t layout_group_round_time_tick(LayoutGroup *layout_group);
-void layout_group_reset_round(LayoutGroup *layout_group);

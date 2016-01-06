@@ -17,8 +17,6 @@ RoundTimeLayer *round_time_layer_create() {
     round_time_layer->text_layer = text_layer;
 
     layer_add_child(layer, text_layer_get_layer(text_layer));
-    round_time_layer_set_time_left(round_time_layer, ROUND_TIME_DEFAULT_LENGTH);
-
     return round_time_layer;
 }
 
@@ -39,23 +37,11 @@ void round_time_layer_set_frame(RoundTimeLayer *round_time_layer, GRect frame) {
     layer_set_frame(round_time_layer_get_layer(round_time_layer), frame);
 }
 
-static void round_time_layer_update(RoundTimeLayer *round_time_layer) {
-    uint32_t time_left = round_time_layer->time_left;
+void round_time_layer_set_time_left(RoundTimeLayer *round_time_layer, uint32_t time_left) {
     static char buf[_ROUND_TIME_BUF_LENGTH];
     int min = (time_left % (1000 * 60 * 60)) / (1000 * 60);
     int sec = ((time_left % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
     snprintf(buf, sizeof(buf), "%s%d:%s%d",
         (min < 10 ? "0" : ""), min, (sec < 10 ? "0" : ""), sec);
     text_layer_set_text(round_time_layer->text_layer, buf);
-}
-
-void round_time_layer_set_time_left(RoundTimeLayer *round_time_layer, uint32_t time_left) {
-    round_time_layer->time_left = time_left;
-    round_time_layer_update(round_time_layer);
-}
-
-uint32_t round_time_layer_tick(RoundTimeLayer *round_time_layer) {
-    round_time_layer->time_left -= 1000;
-    round_time_layer_update(round_time_layer);
-    return round_time_layer->time_left;
 }

@@ -12,7 +12,8 @@
   "capabilities": [ "configurable" ],
   "appKeys": {
       "name-p1" : 1,
-      "name-p2" : 2
+      "name-p2" : 2,
+      "round-enabled" : 3
   },
   "resources": {
     "media": [
