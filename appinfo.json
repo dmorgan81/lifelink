@@ -18,7 +18,7 @@
   "resources": {
     "media": [
       {
-        "type": "bitmap",
+        "type": "pbi",
         "name": "IMAGE_MENU_ICON",
         "menuIcon": true,
         "file": "lifelink_icon.png"
