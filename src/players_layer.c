@@ -1,18 +1,19 @@
 #include <pebble.h>
 #include "logging.h"
+#include "constants.h"
+#include "game_state.h"
 #include "effect_layer/effect_layer.h"
 #include "player_layer.h"
 #include "players_layer.h"
 
-#define PLAYERS_LAYER_MAX_PLAYERS 2
-
 typedef struct {
-    PlayerLayer *player_layers[PLAYERS_LAYER_MAX_PLAYERS];
+    PlayerLayer *player_layers[MAX_PLAYERS];
     PlayerLayer *current_player;
     InverterLayer *inverter_layer;
+    GameState *game_state;
 } Data;
 
-PlayersLayer *players_layer_create(GRect frame) {
+PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     log_func();
     PlayersLayer *this = layer_create_with_data(frame, sizeof(Data));
     Data *data = (Data *) layer_get_data(this);
@@ -21,14 +22,14 @@ PlayersLayer *players_layer_create(GRect frame) {
     uint8_t h = bounds.size.h / 2;
     GRect inset = GRect(0, 0, bounds.size.w, h);
     data->player_layers[0] = player_layer_create(inset);
+    player_layer_set_life(data->player_layers[0], game_state->life_totals[0]);
     player_layer_set_name(data->player_layers[0], "Player One");
-    player_layer_set_life(data->player_layers[0], 20);
     layer_add_child(this, data->player_layers[0]);
 
     inset = GRect(0, h, bounds.size.w, h);
     data->player_layers[1] = player_layer_create(inset);
+    player_layer_set_life(data->player_layers[1], game_state->life_totals[1]);
     player_layer_set_name(data->player_layers[1], "Player Two");
-    player_layer_set_life(data->player_layers[1], 20);
     layer_add_child(this, data->player_layers[1]);
 
     data->current_player = data->player_layers[0];
@@ -37,13 +38,16 @@ PlayersLayer *players_layer_create(GRect frame) {
     data->inverter_layer = inverter_layer_create(inset);
     layer_add_child(this, inverter_layer_get_layer(data->inverter_layer));
 
+    data->game_state = game_state;
+
     return this;
 }
 
 void players_layer_destroy(PlayersLayer *this) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
-    for (uint8_t i = 0; i < PLAYERS_LAYER_MAX_PLAYERS; i++) {
+    for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
+        data->game_state->life_totals[i] = player_layer_get_life(data->player_layers[i]);
         player_layer_destroy(data->player_layers[i]);
     }
     inverter_layer_destroy(data->inverter_layer);
@@ -55,12 +59,12 @@ void players_layer_swap_players(PlayersLayer *this) {
     Data *data = (Data *) layer_get_data(this);
 
     uint8_t i;
-    for (i = 0; i < PLAYERS_LAYER_MAX_PLAYERS; i++) {
+    for (i = 0; i < MAX_PLAYERS; i++) {
         if (data->current_player == data->player_layers[i]) {
             break;
         }
     }
-    i = (i == PLAYERS_LAYER_MAX_PLAYERS - 1) ? 0 : i + 1;
+    i = (i == MAX_PLAYERS - 1) ? 0 : i + 1;
 
     logd("before %s", player_layer_get_name(data->current_player));
     data->current_player = data->player_layers[i];

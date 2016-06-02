@@ -1,6 +1,9 @@
 #include <pebble.h>
 #include "logging.h"
+#include "game_state.h"
 #include "players_layer.h"
+
+static GameState *s_game_state;
 
 static Window *s_window;
 static GBitmap *s_action_bar_icons[3];
@@ -62,7 +65,7 @@ static void window_load(Window *window) {
     layer_add_child(root_layer, status_bar_layer_get_layer(s_status_bar_layer));
 
     frame = GRect(0, STATUS_BAR_LAYER_HEIGHT, w, bounds.size.h - STATUS_BAR_LAYER_HEIGHT);
-    s_players_layer = players_layer_create(frame);
+    s_players_layer = players_layer_create(frame, s_game_state);
     layer_add_child(root_layer, s_players_layer);
 }
 
@@ -78,6 +81,8 @@ static void window_unload(Window *window) {
 
 static void init(void) {
     log_func();
+    s_game_state = game_state_load();
+
     s_window = window_create();
     window_set_window_handlers(s_window, (WindowHandlers) {
         .load = window_load,
@@ -89,6 +94,9 @@ static void init(void) {
 static void deinit(void) {
     log_func();
     window_destroy(s_window);
+
+    game_state_save(s_game_state);
+    game_state_destroy(s_game_state);
 }
 
 int main(void) {
