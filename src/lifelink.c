@@ -3,9 +3,17 @@
 #include "players_layer.h"
 
 static Window *s_window;
+static GBitmap *s_action_bar_icons[3];
 static ActionBarLayer *s_action_bar_layer;
 static StatusBarLayer *s_status_bar_layer;
 static PlayersLayer *s_players_layer;
+
+typedef enum {
+    ActionBarIconUp,
+    ActionBarIconSwap,
+    ActionBarIconDown,
+    ActionBarIconCount
+} ActionBarIcons;
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
@@ -36,6 +44,14 @@ static void window_load(Window *window) {
     GRect bounds = layer_get_bounds(root_layer);
 
     s_action_bar_layer = action_bar_layer_create();
+    s_action_bar_icons[ActionBarIconUp] = gbitmap_create_with_resource(RESOURCE_ID_UP);
+    s_action_bar_icons[ActionBarIconSwap] = gbitmap_create_with_resource(RESOURCE_ID_SWAP);
+    s_action_bar_icons[ActionBarIconDown] = gbitmap_create_with_resource(RESOURCE_ID_DOWN);
+    action_bar_layer_set_icon(s_action_bar_layer, BUTTON_ID_UP, s_action_bar_icons[ActionBarIconUp]);
+    action_bar_layer_set_icon(s_action_bar_layer, BUTTON_ID_SELECT, s_action_bar_icons[ActionBarIconSwap]);
+    action_bar_layer_set_icon(s_action_bar_layer, BUTTON_ID_DOWN, s_action_bar_icons[ActionBarIconDown]);
+    action_bar_layer_set_icon_press_animation(s_action_bar_layer, BUTTON_ID_UP, ActionBarLayerIconPressAnimationMoveUp);
+    action_bar_layer_set_icon_press_animation(s_action_bar_layer, BUTTON_ID_DOWN, ActionBarLayerIconPressAnimationMoveDown);
     action_bar_layer_set_click_config_provider(s_action_bar_layer, click_config_provider);
     action_bar_layer_add_to_window(s_action_bar_layer, window);
 
@@ -55,6 +71,9 @@ static void window_unload(Window *window) {
     players_layer_destroy(s_players_layer);
     status_bar_layer_destroy(s_status_bar_layer);
     action_bar_layer_destroy(s_action_bar_layer);
+    for (uint8_t i = 0; i < ActionBarIconCount; i++) {
+        gbitmap_destroy(s_action_bar_icons[i]);
+    }
 }
 
 static void init(void) {

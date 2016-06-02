@@ -1,18 +1,34 @@
 {
-  "uuid": "56425338-eaa9-41b2-ae56-6c304799c631",
-  "shortName": "Lifelink",
-  "longName": "Lifelink",
-  "companyName": "David Morgan",
-  "versionLabel": "2.0",
-  "sdkVersion": "3",
-  "targetPlatforms": ["aplite", "basalt", "chalk"],
-  "enableMultiJS": true,
-  "watchapp": {
-    "watchface": false
-  },
-  "appKeys": {
-  },
-  "resources": {
-    "media": []
-  }
+    "uuid": "56425338-eaa9-41b2-ae56-6c304799c631",
+    "shortName": "Lifelink",
+    "longName": "Lifelink",
+    "companyName": "David Morgan",
+    "versionLabel": "2.0",
+    "sdkVersion": "3",
+    "targetPlatforms": ["aplite", "basalt", "chalk"],
+    "enableMultiJS": true,
+    "watchapp": {
+        "watchface": false
+    },
+    "appKeys": {
+    },
+    "resources": {
+        "media": [
+            {
+                "type": "bitmap",
+                "name": "UP",
+                "file": "action_bar_icon_up.png"
+            },
+            {
+                "type": "bitmap",
+                "name": "DOWN",
+                "file": "action_bar_icon_down.png"
+            },
+            {
+                "type": "bitmap",
+                "name": "SWAP",
+                "file": "action_bar_icon_swap.png"
+            }
+        ]
+    }
 }
