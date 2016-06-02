@@ -18,6 +18,8 @@ LifeLayer *life_layer_create(GRect frame) {
 
     data->text_layer = text_layer_create(bounds);
     text_layer_set_font(data->text_layer, fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS));
+    text_layer_set_text_color(data->text_layer, GColorWhite);
+    text_layer_set_background_color(data->text_layer, GColorBlack);
     text_layer_set_text_alignment(data->text_layer, GTextAlignmentRight);
     text_layer_set_text(data->text_layer, data->buf);
     layer_add_child(this, text_layer_get_layer(data->text_layer));
@@ -32,7 +34,7 @@ void life_layer_destroy(LifeLayer *this) {
     layer_destroy(this);
 }
 
-int16_t layer_get_life(LifeLayer *this) {
+int16_t life_layer_get_life(LifeLayer *this) {
     log_func();
     return ((Data *) layer_get_data(this))->life;
 }

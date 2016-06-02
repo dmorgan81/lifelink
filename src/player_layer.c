@@ -46,6 +46,12 @@ void player_layer_set_life(PlayerLayer *this, int16_t life) {
     life_layer_set_life(data->life_layer, life);
 }
 
+char *player_layer_get_name(PlayerLayer *this) {
+    log_func();
+    Data *data = (Data *) layer_get_data(this);
+    return name_layer_get_name(data->name_layer);
+}
+
 void player_layer_set_name(PlayerLayer *this, char *name) {
     log_func();
     Data *data = (Data *) layer_get_data(this);

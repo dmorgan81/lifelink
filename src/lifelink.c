@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include "logging.h"
-#include "player_layer.h"
 #include "players_layer.h"
 
 static Window *s_window;
@@ -8,12 +7,36 @@ static ActionBarLayer *s_action_bar_layer;
 static StatusBarLayer *s_status_bar_layer;
 static PlayersLayer *s_players_layer;
 
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+    log_func();
+    players_layer_current_player_increment_life(s_players_layer);
+}
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+    log_func();
+    players_layer_swap_players(s_players_layer);
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+    log_func();
+    players_layer_current_player_decrement_life(s_players_layer);
+}
+
+static void click_config_provider(void *context) {
+    log_func();
+    window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+    window_single_repeating_click_subscribe(BUTTON_ID_UP, 50, up_click_handler);
+    window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 50, down_click_handler);
+}
+
 static void window_load(Window *window) {
     log_func();
+    window_set_background_color(window, GColorBlack);
     Layer *root_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(root_layer);
 
     s_action_bar_layer = action_bar_layer_create();
+    action_bar_layer_set_click_config_provider(s_action_bar_layer, click_config_provider);
     action_bar_layer_add_to_window(s_action_bar_layer, window);
 
     uint8_t w = bounds.size.w - ACTION_BAR_WIDTH;
