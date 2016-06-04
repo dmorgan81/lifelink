@@ -2,6 +2,7 @@
 #include "logging.h"
 #include "constants.h"
 #include "game_state.h"
+#include "settings.h"
 #include "effect_layer/effect_layer.h"
 #include "player_layer.h"
 #include "players_layer.h"
@@ -13,6 +14,15 @@ typedef struct {
     GameState *game_state;
 } Data;
 
+static void settings_update_listener(Settings *settings, void *context) {
+    log_func();
+    PlayersLayer *this = (PlayersLayer *) context;
+    Data *data = (Data *) layer_get_data(this);
+    player_layer_set_name(data->player_layers[0], settings->player_names[0]);
+    player_layer_set_name(data->player_layers[1], settings->player_names[1]);
+    layer_mark_dirty(this);
+}
+
 PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     log_func();
     PlayersLayer *this = layer_create_with_data(frame, sizeof(Data));
@@ -23,13 +33,11 @@ PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     GRect inset = GRect(0, 0, bounds.size.w, h);
     data->player_layers[0] = player_layer_create(inset);
     player_layer_set_life(data->player_layers[0], game_state->life_totals[0]);
-    player_layer_set_name(data->player_layers[0], "Player One");
     layer_add_child(this, data->player_layers[0]);
 
     inset = GRect(0, h, bounds.size.w, h);
     data->player_layers[1] = player_layer_create(inset);
     player_layer_set_life(data->player_layers[1], game_state->life_totals[1]);
-    player_layer_set_name(data->player_layers[1], "Player Two");
     layer_add_child(this, data->player_layers[1]);
 
     data->current_player = data->player_layers[0];
@@ -39,6 +47,7 @@ PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     layer_add_child(this, inverter_layer_get_layer(data->inverter_layer));
 
     data->game_state = game_state;
+    settings_add_listener(settings_update_listener, this);
 
     return this;
 }

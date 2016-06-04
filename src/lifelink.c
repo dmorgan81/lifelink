@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "logging.h"
 #include "game_state.h"
+#include "settings.h"
 #include "players_layer.h"
 
 static GameState *s_game_state;
@@ -81,6 +82,7 @@ static void window_unload(Window *window) {
 
 static void init(void) {
     log_func();
+    settings_init();
     s_game_state = game_state_load();
 
     s_window = window_create();
@@ -97,6 +99,7 @@ static void deinit(void) {
 
     game_state_save(s_game_state);
     game_state_destroy(s_game_state);
+    settings_deinit();
 }
 
 int main(void) {

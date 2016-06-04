@@ -1,0 +1,27 @@
+[
+    {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Player Names"
+            },
+            {
+                "type": "input",
+                "appKey": "PlayerOneName",
+                "label": "Player One",
+                "defaultValue": "Player One"
+            },
+            {
+                "type": "input",
+                "appKey": "PlayerTwoName",
+                "label": "Player Two",
+                "defaultValue": "Player Two"
+            }
+        ]
+    },
+    {
+        "type": "submit",
+        "defaultValue": "Save"
+    }
+]

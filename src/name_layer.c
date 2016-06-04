@@ -1,11 +1,10 @@
 #include <pebble.h>
 #include "logging.h"
+#include "constants.h"
 #include "name_layer.h"
 
-#define NAME_LAYER_MAX_BUF_LEN 64
-
 typedef struct {
-    char buf[NAME_LAYER_MAX_BUF_LEN];
+    char buf[MAX_NAME_LEN];
     TextLayer *text_layer;
 } Data;
 
@@ -40,6 +39,6 @@ char *name_layer_get_name(NameLayer *this) {
 void name_layer_set_name(NameLayer *this, char *name) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
-    strncpy(data->buf, name, NAME_LAYER_MAX_BUF_LEN - 1);
+    strncpy(data->buf, name, MAX_NAME_LEN - 1);
     layer_mark_dirty(this);
 }

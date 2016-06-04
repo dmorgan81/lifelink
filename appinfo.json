@@ -10,7 +10,10 @@
     "watchapp": {
         "watchface": false
     },
+    "capabilities": [ "configurable" ],
     "appKeys": {
+        "PlayerOneName": 0,
+        "PlayerTwoName": 1
     },
     "resources": {
         "media": [
