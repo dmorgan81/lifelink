@@ -10,7 +10,7 @@
 typedef struct {
     PlayerLayer *player_layers[MAX_PLAYERS];
     PlayerLayer *current_player;
-    InverterLayer *inverter_layer;
+    EffectLayer *effect_layer;
     GameState *game_state;
 } Data;
 
@@ -43,8 +43,9 @@ PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     data->current_player = data->player_layers[0];
 
     inset = layer_get_bounds(data->current_player);
-    data->inverter_layer = inverter_layer_create(inset);
-    layer_add_child(this, inverter_layer_get_layer(data->inverter_layer));
+    data->effect_layer = effect_layer_create(inset);
+    effect_layer_add_effect(data->effect_layer, effect_invert, NULL);
+    layer_add_child(this, effect_layer_get_layer(data->effect_layer));
 
     data->game_state = game_state;
     settings_add_listener(settings_update_listener, this);
@@ -59,7 +60,7 @@ void players_layer_destroy(PlayersLayer *this) {
         data->game_state->life_totals[i] = player_layer_get_life(data->player_layers[i]);
         player_layer_destroy(data->player_layers[i]);
     }
-    inverter_layer_destroy(data->inverter_layer);
+    effect_layer_destroy(data->effect_layer);
     layer_destroy(this);
 }
 
@@ -80,7 +81,7 @@ void players_layer_swap_players(PlayersLayer *this) {
     logd("after %s", player_layer_get_name(data->current_player));
 
     GRect frame = layer_get_frame(data->current_player);
-    PropertyAnimation *property_animation = property_animation_create_layer_frame(inverter_layer_get_layer(data->inverter_layer), NULL, &frame);
+    PropertyAnimation *property_animation = property_animation_create_layer_frame(effect_layer_get_layer(data->effect_layer), NULL, &frame);
     Animation *animation = property_animation_get_animation(property_animation);
     animation_schedule(animation);
 }
