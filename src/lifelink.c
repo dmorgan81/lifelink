@@ -62,7 +62,9 @@ static void window_load(Window *window) {
     uint8_t w = bounds.size.w - ACTION_BAR_WIDTH;
     GRect frame = GRect(0, 0, w, STATUS_BAR_LAYER_HEIGHT);
     s_status_bar_layer = status_bar_layer_create();
+#ifdef PBL_RECT
     layer_set_frame(status_bar_layer_get_layer(s_status_bar_layer), frame);
+#endif
     layer_add_child(root_layer, status_bar_layer_get_layer(s_status_bar_layer));
 
     frame = GRect(0, STATUS_BAR_LAYER_HEIGHT, w, bounds.size.h - STATUS_BAR_LAYER_HEIGHT);

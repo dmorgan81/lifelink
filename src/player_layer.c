@@ -15,11 +15,11 @@ PlayerLayer *player_layer_create(GRect frame) {
     Data *data = (Data *) layer_get_data(this);
     GRect bounds = layer_get_bounds(this);
 
-    GRect inset = grect_inset(bounds, GEdgeInsets(5, 5, 29));
+    GRect inset = grect_inset(bounds, GEdgeInsets(0, 5, 29));
     data->life_layer = life_layer_create(inset);
     layer_add_child(this, data->life_layer);
 
-    inset= grect_inset(bounds, GEdgeInsets(52, 5, 5));
+    inset= grect_inset(bounds, GEdgeInsets(47, 5, 5));
     data->name_layer = name_layer_create(inset);
     layer_add_child(this, data->name_layer);
 
