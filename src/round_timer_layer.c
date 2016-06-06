@@ -17,14 +17,14 @@ static void settings_update_listener(Settings *settings, void *context) {
     Data *data = (Data *) layer_get_data(this);
 
     if (!settings->round_timer_enabled) {
-        data->game_state->round_time_left = DEFAULT_ROUND_TIME;
+        data->game_state->round_time_left = settings->round_length;
         data->game_state->last_run = 0;
     } else if (data->game_state->last_run > 0) {
         int32_t time_left = data->game_state->round_time_left;
         int32_t last_run = data->game_state->last_run * 1000;
         int32_t now = time(NULL) * 1000;
         time_left -= (now - last_run);
-        data->game_state->round_time_left = time_left > 0 ? time_left : DEFAULT_ROUND_TIME;
+        data->game_state->round_time_left = time_left > 0 ? (uint32_t) time_left : settings->round_length;
     }
     layer_set_hidden(this, !settings->round_timer_enabled);
 }

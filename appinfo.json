@@ -14,7 +14,8 @@
     "appKeys": {
         "PlayerOneName": 0,
         "PlayerTwoName": 1,
-        "RoundTimerEnabled": 2
+        "RoundTimerEnabled": 2,
+        "RoundLength": 3
     },
     "resources": {
         "media": [

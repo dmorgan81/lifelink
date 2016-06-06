@@ -5,11 +5,13 @@ typedef enum {
     AppKeyPlayerOneName = 0,
     AppKeyPlayerTwoName,
     AppKeyRoundTimerEnabled,
+    AppKeyRoundLength,
 } SettingsAppKeys;
 
 typedef struct {
     char player_names[MAX_PLAYERS][MAX_NAME_LEN];
     bool round_timer_enabled;
+    uint32_t round_length;
 } Settings;
 
 typedef void (SettingsUpdateListener)(Settings *settings, void *context);

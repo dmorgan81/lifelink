@@ -32,6 +32,15 @@
                 "appKey": "RoundTimerEnabled",
                 "label": "Enable Round Timer",
                 "defaultValue": false
+            },
+            {
+                "type": "slider",
+                "appKey": "RoundLength",
+                "label": "Round Length",
+                "description": "Round length in minutes. Does not affect the current round.",
+                "min": 30,
+                "max": 60,
+                "step": 10
             }
         ]
     },

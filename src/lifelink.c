@@ -50,7 +50,7 @@ static void select_long_click_handler(ClickRecognizerRef recognizer, void *conte
     log_func();
     if (s_settings->round_timer_enabled) {
         players_layer_reset(s_players_layer);
-        s_game_state->round_time_left = DEFAULT_ROUND_TIME;
+        s_game_state->round_time_left = s_settings->round_length;
         vibes_long_pulse();
     }
 }
