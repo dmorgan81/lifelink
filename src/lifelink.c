@@ -6,6 +6,7 @@
 #include "round_timer_layer.h"
 
 static GameState *s_game_state;
+static Settings *s_settings;
 
 static Window *s_window;
 static GBitmap *s_action_bar_icons[3];
@@ -26,7 +27,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     round_timer_layer_tick(s_round_timer_layer);
     if (s_game_state->round_time_left <= 0) {
         tick_timer_service_unsubscribe();
-        vibes_long_pulse();
+        vibes_double_pulse();
     }
 }
 
@@ -36,6 +37,21 @@ static void settings_update_listener(Settings *settings, void *context) {
         tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
     } else {
         tick_timer_service_unsubscribe();
+    }
+}
+
+static void select_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
+    log_func();
+    players_layer_reset(s_players_layer);
+    vibes_short_pulse();
+}
+
+static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+    log_func();
+    if (s_settings->round_timer_enabled) {
+        players_layer_reset(s_players_layer);
+        s_game_state->round_time_left = DEFAULT_ROUND_TIME;
+        vibes_long_pulse();
     }
 }
 
@@ -57,6 +73,8 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 static void click_config_provider(void *context) {
     log_func();
     window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+    window_multi_click_subscribe(BUTTON_ID_SELECT, 2, 0, 0, true, select_multi_click_handler);
+    window_long_click_subscribe(BUTTON_ID_SELECT, 0, select_long_click_handler, NULL);
     window_single_repeating_click_subscribe(BUTTON_ID_UP, 50, up_click_handler);
     window_single_repeating_click_subscribe(BUTTON_ID_DOWN, 50, down_click_handler);
 }
@@ -105,6 +123,7 @@ static void window_unload(Window *window) {
 }
 
 static void focus_handler(bool focus) {
+    log_func();
     if (focus) {
         settings_add_listener(settings_update_listener, NULL);
         app_focus_service_unsubscribe();
@@ -113,7 +132,7 @@ static void focus_handler(bool focus) {
 
 static void init(void) {
     log_func();
-    settings_init();
+    s_settings = settings_init();
     s_game_state = game_state_load();
 
     s_window = window_create();

@@ -14,6 +14,6 @@ typedef struct {
 
 typedef void (SettingsUpdateListener)(Settings *settings, void *context);
 
-void settings_init(void);
+Settings *settings_init(void);
 void settings_deinit(void);
 void settings_add_listener(SettingsUpdateListener *listener, void *context);

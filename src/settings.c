@@ -84,10 +84,11 @@ static void sync_init(Settings *settings) {
         sync_changed_handler, sync_error_handler, settings);
 }
 
-void settings_init(void) {
+Settings *settings_init(void) {
     log_func();
     s_settings = settings_load();
     sync_init(s_settings);
+    return s_settings;
 }
 
 void settings_deinit(void) {

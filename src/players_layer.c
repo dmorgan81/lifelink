@@ -64,6 +64,15 @@ void players_layer_destroy(PlayersLayer *this) {
     layer_destroy(this);
 }
 
+static void animate(PlayersLayer *this) {
+    log_func();
+    Data *data = (Data *) layer_get_data(this);
+    GRect frame = layer_get_frame(data->current_player);
+    PropertyAnimation *property_animation = property_animation_create_layer_frame(effect_layer_get_layer(data->effect_layer), NULL, &frame);
+    Animation *animation = property_animation_get_animation(property_animation);
+    animation_schedule(animation);
+}
+
 void players_layer_swap_players(PlayersLayer *this) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
@@ -80,10 +89,7 @@ void players_layer_swap_players(PlayersLayer *this) {
     data->current_player = data->player_layers[i];
     logd("after %s", player_layer_get_name(data->current_player));
 
-    GRect frame = layer_get_frame(data->current_player);
-    PropertyAnimation *property_animation = property_animation_create_layer_frame(effect_layer_get_layer(data->effect_layer), NULL, &frame);
-    Animation *animation = property_animation_get_animation(property_animation);
-    animation_schedule(animation);
+    animate(this);
 }
 
 static void current_player_modify_life(PlayersLayer *this, int16_t i) {
@@ -102,4 +108,15 @@ void players_layer_current_player_increment_life(PlayersLayer *this) {
 void players_layer_current_player_decrement_life(PlayersLayer *this) {
     log_func();
     current_player_modify_life(this, -1);
+}
+
+void players_layer_reset(PlayersLayer *this) {
+    log_func();
+    Data *data = (Data *) layer_get_data(this);
+    for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
+        player_layer_set_life(data->player_layers[i], DEFAULT_LIFE);
+    }
+    data->current_player = data->player_layers[0];
+    animate(this);
+    layer_mark_dirty(this);
 }
