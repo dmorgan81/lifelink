@@ -13,7 +13,8 @@
     "capabilities": [ "configurable" ],
     "appKeys": {
         "PlayerOneName": 0,
-        "PlayerTwoName": 1
+        "PlayerTwoName": 1,
+        "RoundTimerEnabled": 2
     },
     "resources": {
         "media": [

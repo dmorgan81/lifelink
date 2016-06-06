@@ -3,6 +3,7 @@
 #include "game_state.h"
 #include "settings.h"
 #include "players_layer.h"
+#include "round_timer_layer.h"
 
 static GameState *s_game_state;
 
@@ -11,6 +12,7 @@ static GBitmap *s_action_bar_icons[3];
 static ActionBarLayer *s_action_bar_layer;
 static StatusBarLayer *s_status_bar_layer;
 static PlayersLayer *s_players_layer;
+static RoundTimerLayer *s_round_timer_layer;
 
 typedef enum {
     ActionBarIconUp,
@@ -18,6 +20,24 @@ typedef enum {
     ActionBarIconDown,
     ActionBarIconCount
 } ActionBarIcons;
+
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+    log_func();
+    round_timer_layer_tick(s_round_timer_layer);
+    if (s_game_state->round_time_left <= 0) {
+        tick_timer_service_unsubscribe();
+        vibes_long_pulse();
+    }
+}
+
+static void settings_update_listener(Settings *settings, void *context) {
+    log_func();
+    if (settings->round_timer_enabled) {
+        tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+    } else {
+        tick_timer_service_unsubscribe();
+    }
+}
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
@@ -59,26 +79,35 @@ static void window_load(Window *window) {
     action_bar_layer_set_click_config_provider(s_action_bar_layer, click_config_provider);
     action_bar_layer_add_to_window(s_action_bar_layer, window);
 
-    uint8_t w = bounds.size.w - ACTION_BAR_WIDTH;
-    GRect frame = GRect(0, 0, w, STATUS_BAR_LAYER_HEIGHT);
     s_status_bar_layer = status_bar_layer_create();
-#ifdef PBL_RECT
-    layer_set_frame(status_bar_layer_get_layer(s_status_bar_layer), frame);
-#endif
     layer_add_child(root_layer, status_bar_layer_get_layer(s_status_bar_layer));
 
-    frame = GRect(0, STATUS_BAR_LAYER_HEIGHT, w, bounds.size.h - STATUS_BAR_LAYER_HEIGHT);
+    GRect frame = GRect(0, -2, bounds.size.w, STATUS_BAR_LAYER_HEIGHT + 2);
+    s_round_timer_layer = round_timer_layer_create(frame, s_game_state);
+    layer_add_child(status_bar_layer_get_layer(s_status_bar_layer), s_round_timer_layer);
+
+    frame = GRect(0, STATUS_BAR_LAYER_HEIGHT, bounds.size.w - ACTION_BAR_WIDTH, bounds.size.h - STATUS_BAR_LAYER_HEIGHT);
     s_players_layer = players_layer_create(frame, s_game_state);
     layer_add_child(root_layer, s_players_layer);
 }
 
 static void window_unload(Window *window) {
     log_func();
+    tick_timer_service_unsubscribe();
+
     players_layer_destroy(s_players_layer);
     status_bar_layer_destroy(s_status_bar_layer);
     action_bar_layer_destroy(s_action_bar_layer);
+    round_timer_layer_destory(s_round_timer_layer);
     for (uint8_t i = 0; i < ActionBarIconCount; i++) {
         gbitmap_destroy(s_action_bar_icons[i]);
+    }
+}
+
+static void focus_handler(bool focus) {
+    if (focus) {
+        settings_add_listener(settings_update_listener, NULL);
+        app_focus_service_unsubscribe();
     }
 }
 
@@ -92,6 +121,11 @@ static void init(void) {
         .load = window_load,
         .unload = window_unload,
     });
+
+    app_focus_service_subscribe_handlers((AppFocusHandlers) {
+        .did_focus = focus_handler
+    });
+
     window_stack_push(s_window, true);
 }
 
@@ -99,7 +133,6 @@ static void deinit(void) {
     log_func();
     window_destroy(s_window);
 
-    game_state_save(s_game_state);
     game_state_destroy(s_game_state);
     settings_deinit();
 }

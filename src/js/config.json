@@ -21,6 +21,21 @@
         ]
     },
     {
+        "type": "section",
+        "items": [
+            {
+                "type": "heading",
+                "defaultValue": "Round Timer"
+            },
+            {
+                "type": "toggle",
+                "appKey": "RoundTimerEnabled",
+                "label": "Enable Round Timer",
+                "defaultValue": false
+            }
+        ]
+    },
+    {
         "type": "submit",
         "defaultValue": "Save"
     }

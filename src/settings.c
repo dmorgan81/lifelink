@@ -29,6 +29,7 @@ static Settings *settings_load(void) {
     if (version == 0) {
         strncpy(this->player_names[0], "Player One", MAX_NAME_LEN);
         strncpy(this->player_names[1], "Player Two", MAX_NAME_LEN);
+        this->round_timer_enabled = false;
         version = 1;
     } else {
         persist_read_data(PERSIST_KEY_SETTINGS_DATA, this, sizeof(Settings));
@@ -44,7 +45,6 @@ static void sync_error_handler(DictionaryResult dict_error, AppMessageResult app
 
 static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, const Tuple *old_tuple, void *context) {
     log_func();
-    logd("%d", heap_bytes_free());
     if (new_tuple == NULL || old_tuple == NULL) {
         return;
     }
@@ -56,6 +56,9 @@ static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, con
             break;
         case AppKeyPlayerTwoName:
             strncpy(settings->player_names[1], new_tuple->value->cstring, MAX_NAME_LEN);
+            break;
+        case AppKeyRoundTimerEnabled:
+            settings->round_timer_enabled = new_tuple->value->uint8;
             break;
     }
     settings_save(settings);
@@ -74,6 +77,7 @@ static void sync_init(Settings *settings) {
     Tuplet initial_values[] = {
         TupletCString(AppKeyPlayerOneName, settings->player_names[0]),
         TupletCString(AppKeyPlayerTwoName, settings->player_names[1]),
+        TupletInteger(AppKeyRoundTimerEnabled, settings->round_timer_enabled),
     };
 
     app_sync_init(&s_sync, s_sync_buffer, sizeof(s_sync_buffer), initial_values, ARRAY_LENGTH(initial_values),

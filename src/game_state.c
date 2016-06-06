@@ -16,12 +16,9 @@ GameState *game_state_load(void) {
     return this;
 }
 
-void game_state_save(GameState *this) {
-    log_func();
-    persist_write_data(PERSIST_KEY_GAME_STATE, this, sizeof(GameState));
-}
-
 void game_state_destroy(GameState *this) {
     log_func();
+    this->last_run = time(NULL);
+    persist_write_data(PERSIST_KEY_GAME_STATE, this, sizeof(GameState));
     free(this);
 }
