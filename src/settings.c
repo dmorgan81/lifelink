@@ -25,6 +25,15 @@ static void settings_save(Settings *this) {
 static Settings *settings_load(void) {
     log_func();
     Settings *this = malloc(sizeof(Settings));
+
+    // Remove old settings from app version 1
+    if (persist_exists(7)) {
+        logi("Deleting old app settings");
+        for (int i = 0; i < 7; i++) {
+            persist_delete(i + 1);
+        }
+    }
+
     int32_t version = persist_read_int(PERSIST_KEY_SETTINGS_VERSION);
     if (version == 0) {
         strncpy(this->player_names[0], "Player One", MAX_NAME_LEN);
