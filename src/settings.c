@@ -31,6 +31,7 @@ static Settings *settings_load(void) {
         strncpy(this->player_names[1], "Player Two", MAX_NAME_LEN);
         this->round_timer_enabled = false;
         this->round_length = 50 * 60000; // 50 minutes
+        this->starting_life = 20;
         version = 1;
     } else {
         persist_read_data(PERSIST_KEY_SETTINGS_DATA, this, sizeof(Settings));
@@ -64,6 +65,9 @@ static void sync_changed_handler(const uint32_t key, const Tuple *new_tuple, con
         case AppKeyRoundLength:
             settings->round_length = new_tuple->value->uint32 * 60000;
             break;
+        case AppKeyStartingLife:
+            settings->starting_life = new_tuple->value->uint8;
+            break;
     }
     settings_save(settings);
 
@@ -83,6 +87,7 @@ static void sync_init(Settings *settings) {
         TupletCString(AppKeyPlayerTwoName, settings->player_names[1]),
         TupletInteger(AppKeyRoundTimerEnabled, settings->round_timer_enabled),
         TupletInteger(AppKeyRoundLength, settings->round_length),
+        TupletInteger(AppKeyStartingLife, settings->starting_life),
     };
 
     app_sync_init(&s_sync, s_sync_buffer, sizeof(s_sync_buffer), initial_values, ARRAY_LENGTH(initial_values),

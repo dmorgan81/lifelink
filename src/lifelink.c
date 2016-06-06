@@ -42,14 +42,14 @@ static void settings_update_listener(Settings *settings, void *context) {
 
 static void select_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
-    players_layer_reset(s_players_layer);
+    players_layer_reset(s_players_layer, s_settings);
     vibes_short_pulse();
 }
 
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
     if (s_settings->round_timer_enabled) {
-        players_layer_reset(s_players_layer);
+        players_layer_reset(s_players_layer, s_settings);
         s_game_state->round_time_left = s_settings->round_length;
         vibes_long_pulse();
     }
@@ -133,7 +133,7 @@ static void focus_handler(bool focus) {
 static void init(void) {
     log_func();
     s_settings = settings_init();
-    s_game_state = game_state_load();
+    s_game_state = game_state_load(s_settings);
 
     s_window = window_create();
     window_set_window_handlers(s_window, (WindowHandlers) {

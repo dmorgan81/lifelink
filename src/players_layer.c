@@ -110,11 +110,11 @@ void players_layer_current_player_decrement_life(PlayersLayer *this) {
     current_player_modify_life(this, -1);
 }
 
-void players_layer_reset(PlayersLayer *this) {
+void players_layer_reset(PlayersLayer *this, Settings *settings) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
     for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
-        player_layer_set_life(data->player_layers[i], DEFAULT_LIFE);
+        player_layer_set_life(data->player_layers[i], settings->starting_life);
     }
     data->current_player = data->player_layers[0];
     animate(this);

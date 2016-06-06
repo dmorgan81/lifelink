@@ -4,19 +4,29 @@
         "items": [
             {
                 "type": "heading",
-                "defaultValue": "Player Names"
+                "defaultValue": "Players"
             },
             {
                 "type": "input",
                 "appKey": "PlayerOneName",
-                "label": "Player One",
+                "label": "Player One Name",
                 "defaultValue": "Player One"
             },
             {
                 "type": "input",
                 "appKey": "PlayerTwoName",
-                "label": "Player Two",
+                "label": "Player Two Name",
                 "defaultValue": "Player Two"
+            },
+            {
+                "type": "slider",
+                "appKey": "StartingLife",
+                "label": "Starting Life",
+                "description": "Does not affect the current game.",
+                "defaultValue": 20,
+                "min": 10,
+                "max": 100,
+                "step": 10
             }
         ]
     },
@@ -36,8 +46,9 @@
             {
                 "type": "slider",
                 "appKey": "RoundLength",
-                "label": "Round Length",
-                "description": "Round length in minutes. Does not affect the current round.",
+                "label": "Round Length In Minutes",
+                "description": "Does not affect the current round.",
+                "defaultValue": 50,
                 "min": 30,
                 "max": 60,
                 "step": 10

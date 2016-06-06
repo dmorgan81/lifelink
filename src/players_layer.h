@@ -9,4 +9,4 @@ void players_layer_destroy(PlayersLayer *this);
 void players_layer_swap_players(PlayersLayer *this);
 void players_layer_current_player_increment_life(PlayersLayer *this);
 void players_layer_current_player_decrement_life(PlayersLayer *this);
-void players_layer_reset(PlayersLayer *this);
+void players_layer_reset(PlayersLayer *this, Settings *settings);
