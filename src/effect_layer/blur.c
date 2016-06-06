@@ -28,7 +28,7 @@ static void blur_(const GBitmap *fb, const GRect fb_bounds, uint16_t row, uint16
     total[0] = (total[0] * 0x55) / nb_points;
     total[1] = (total[1] * 0x55) / nb_points;
     total[2] = (total[2] * 0x55) / nb_points;
-    dest[x-x_start] = GColorFromRGB(total[0], total[1], total[2]).argb;
+    dest[x-x_start] = GColorFromRGB(total[0], total[1], total[2]).argb; 
   }
 }
 #endif
@@ -47,7 +47,7 @@ void effect_blur(GContext* ctx, GRect position, void* param){
   uint16_t offset_y = position.origin.y;
   uint16_t width    = position.size.w;
   uint16_t height   = position.size.h;
-
+  
   uint8_t *buffer               = malloc(width * (radius + 1));
   GBitmapDataRowInfo* row_infos = malloc(sizeof(GBitmapDataRowInfo) * (radius + 1));
   uint8_t circular_index = 0;
@@ -74,10 +74,10 @@ void effect_blur(GContext* ctx, GRect position, void* param){
     memcpy(row_infos[circular_index].data + row_infos[circular_index].min_x, buffer + circular_index*width, row_infos[circular_index].max_x - row_infos[circular_index].min_x);
     circular_index = circular_index < radius ? circular_index + 1 : 0;
   }
-
+  
   free(buffer);
   free(row_infos);
-
+  
   graphics_release_frame_buffer(ctx, fb);
 #endif
 }
