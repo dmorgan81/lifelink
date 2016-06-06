@@ -1,5 +1,5 @@
 {
-    "uuid": "56425338-eaa9-41b2-ae56-6c304799c631",
+    "uuid": "7d02578f-6da7-4cf2-a1b3-25b565710bcb",
     "shortName": "Lifelink",
     "longName": "Lifelink",
     "companyName": "David Morgan",
@@ -18,6 +18,12 @@
     },
     "resources": {
         "media": [
+            {
+                "type": "bitmap",
+                "name": "MENUICON",
+                "file": "menuicon.png",
+                "menuIcon": true
+            },
             {
                 "type": "bitmap",
                 "name": "UP",
