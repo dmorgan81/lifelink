@@ -8,19 +8,19 @@
             },
             {
                 "type": "input",
-                "appKey": "PlayerOneName",
+                "messageKey": "PlayerOneName",
                 "label": "Player One Name",
                 "defaultValue": "Player One"
             },
             {
                 "type": "input",
-                "appKey": "PlayerTwoName",
+                "messageKey": "PlayerTwoName",
                 "label": "Player Two Name",
                 "defaultValue": "Player Two"
             },
             {
                 "type": "slider",
-                "appKey": "StartingLife",
+                "messageKey": "StartingLife",
                 "label": "Starting Life",
                 "description": "Does not affect the current game.",
                 "defaultValue": 20,
@@ -39,13 +39,13 @@
             },
             {
                 "type": "toggle",
-                "appKey": "RoundTimerEnabled",
+                "messageKey": "RoundTimerEnabled",
                 "label": "Enable Round Timer",
                 "defaultValue": false
             },
             {
                 "type": "slider",
-                "appKey": "RoundLength",
+                "messageKey": "RoundLength",
                 "label": "Round Length In Minutes",
                 "description": "Does not affect the current round.",
                 "defaultValue": 50,

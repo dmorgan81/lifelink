@@ -52,7 +52,7 @@ char *player_layer_get_name(PlayerLayer *this) {
     return name_layer_get_name(data->name_layer);
 }
 
-void player_layer_set_name(PlayerLayer *this, char *name) {
+void player_layer_set_name(PlayerLayer *this, const char *name) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
     name_layer_set_name(data->name_layer, name);

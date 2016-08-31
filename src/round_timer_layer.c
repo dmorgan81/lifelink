@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "logging.h"
 #include "constants.h"
-#include "settings.h"
+#include "enamel.h"
 #include "game_state.h"
 #include "round_timer_layer.h"
 
@@ -9,24 +9,25 @@ typedef struct {
     char buf[8];
     TextLayer *text_layer;
     GameState *game_state;
+    EventHandle settings_event_handle;
 } Data;
 
-static void settings_update_listener(Settings *settings, void *context) {
+static void settings_update_handler(void *context) {
     log_func();
     RoundTimerLayer *this = (RoundTimerLayer *) context;
     Data *data = (Data *) layer_get_data(this);
 
-    if (!settings->round_timer_enabled) {
-        data->game_state->round_time_left = settings->round_length;
+    if (!enamel_get_RoundTimerEnabled()) {
+        data->game_state->round_time_left = enamel_get_RoundLength();
         data->game_state->last_run = 0;
     } else if (data->game_state->last_run > 0) {
         int32_t time_left = data->game_state->round_time_left;
         int32_t last_run = data->game_state->last_run * 1000;
         int32_t now = time(NULL) * 1000;
         time_left -= (now - last_run);
-        data->game_state->round_time_left = time_left > 0 ? (uint32_t) time_left : settings->round_length;
+        data->game_state->round_time_left = (uint32_t) (time_left > 0 ?  time_left : enamel_get_RoundLength());
     }
-    layer_set_hidden(this, !settings->round_timer_enabled);
+    layer_set_hidden(this, !enamel_get_RoundTimerEnabled());
 }
 
 RoundTimerLayer *round_timer_layer_create(GRect frame, GameState *game_state) {
@@ -45,13 +46,15 @@ RoundTimerLayer *round_timer_layer_create(GRect frame, GameState *game_state) {
     text_layer_set_text(data->text_layer, data->buf);
     layer_add_child(this, text_layer_get_layer(data->text_layer));
 
-    settings_add_listener(settings_update_listener, this);
+    settings_update_handler(this);
+    data->settings_event_handle = enamel_settings_received_subscribe(settings_update_handler, this);
     return this;
 }
 
 void round_timer_layer_destory(RoundTimerLayer *this) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
+    enamel_settings_received_unsubscribe(data->settings_event_handle);
     text_layer_destroy(data->text_layer);
     layer_destroy(this);
 }

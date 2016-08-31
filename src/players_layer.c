@@ -1,9 +1,9 @@
 #include <pebble.h>
+#include <pebble-effect-layer/pebble-effect-layer.h>
 #include "logging.h"
 #include "constants.h"
 #include "game_state.h"
-#include "settings.h"
-#include "effect_layer/effect_layer.h"
+#include "enamel.h"
 #include "player_layer.h"
 #include "players_layer.h"
 
@@ -12,14 +12,15 @@ typedef struct {
     PlayerLayer *current_player;
     EffectLayer *effect_layer;
     GameState *game_state;
+    EventHandle settings_event_handle;
 } Data;
 
-static void settings_update_listener(Settings *settings, void *context) {
+static void settings_update_handler(void *context) {
     log_func();
     PlayersLayer *this = (PlayersLayer *) context;
     Data *data = (Data *) layer_get_data(this);
-    player_layer_set_name(data->player_layers[0], settings->player_names[0]);
-    player_layer_set_name(data->player_layers[1], settings->player_names[1]);
+    player_layer_set_name(data->player_layers[0], enamel_get_PlayerOneName());
+    player_layer_set_name(data->player_layers[1], enamel_get_PlayerTwoName());
     layer_mark_dirty(this);
 }
 
@@ -48,7 +49,9 @@ PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
     layer_add_child(this, effect_layer_get_layer(data->effect_layer));
 
     data->game_state = game_state;
-    settings_add_listener(settings_update_listener, this);
+
+    settings_update_handler(this);
+    data->settings_event_handle = enamel_settings_received_subscribe(settings_update_handler, this);
 
     return this;
 }
@@ -56,6 +59,7 @@ PlayersLayer *players_layer_create(GRect frame, GameState *game_state) {
 void players_layer_destroy(PlayersLayer *this) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
+    enamel_settings_received_unsubscribe(data->settings_event_handle);
     for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
         data->game_state->life_totals[i] = player_layer_get_life(data->player_layers[i]);
         player_layer_destroy(data->player_layers[i]);
@@ -110,11 +114,11 @@ void players_layer_current_player_decrement_life(PlayersLayer *this) {
     current_player_modify_life(this, -1);
 }
 
-void players_layer_reset(PlayersLayer *this, Settings *settings) {
+void players_layer_reset(PlayersLayer *this) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
     for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
-        player_layer_set_life(data->player_layers[i], settings->starting_life);
+        player_layer_set_life(data->player_layers[i], enamel_get_StartingLife());
     }
     data->current_player = data->player_layers[0];
     animate(this);

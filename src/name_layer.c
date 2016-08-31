@@ -36,7 +36,7 @@ char *name_layer_get_name(NameLayer *this) {
     return ((Data *) layer_get_data(this))->buf;
 }
 
-void name_layer_set_name(NameLayer *this, char *name) {
+void name_layer_set_name(NameLayer *this, const char *name) {
     log_func();
     Data *data = (Data *) layer_get_data(this);
     strncpy(data->buf, name, MAX_NAME_LEN - 1);

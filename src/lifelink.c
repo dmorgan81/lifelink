@@ -1,12 +1,16 @@
 #include <pebble.h>
+#include <pebble-events/pebble-events.h>
 #include "logging.h"
 #include "game_state.h"
-#include "settings.h"
+#include "sync.h"
+#include "enamel.h"
 #include "players_layer.h"
 #include "round_timer_layer.h"
 
 static GameState *s_game_state;
-static Settings *s_settings;
+
+static EventHandle s_tick_timer_event_handle;
+static EventHandle s_settings_event_handle;
 
 static Window *s_window;
 static GBitmap *s_action_bar_icons[3];
@@ -31,26 +35,26 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     }
 }
 
-static void settings_update_listener(Settings *settings, void *context) {
+static void settings_update_handler(void *context) {
     log_func();
-    if (settings->round_timer_enabled) {
-        tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
-    } else {
-        tick_timer_service_unsubscribe();
+    if (enamel_get_RoundTimerEnabled()) {
+        s_tick_timer_event_handle = events_tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+    } else if (s_tick_timer_event_handle != NULL) {
+        events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
     }
 }
 
 static void select_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
-    players_layer_reset(s_players_layer, s_settings);
+    players_layer_reset(s_players_layer);
     vibes_short_pulse();
 }
 
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
     log_func();
-    if (s_settings->round_timer_enabled) {
-        players_layer_reset(s_players_layer, s_settings);
-        s_game_state->round_time_left = s_settings->round_length;
+    if (enamel_get_RoundTimerEnabled()) {
+        players_layer_reset(s_players_layer);
+        s_game_state->round_time_left = enamel_get_RoundLength();
         vibes_long_pulse();
     }
 }
@@ -107,11 +111,16 @@ static void window_load(Window *window) {
     frame = GRect(0, STATUS_BAR_LAYER_HEIGHT, bounds.size.w - ACTION_BAR_WIDTH, bounds.size.h - STATUS_BAR_LAYER_HEIGHT);
     s_players_layer = players_layer_create(frame, s_game_state);
     layer_add_child(root_layer, s_players_layer);
+
+    s_settings_event_handle = enamel_settings_received_subscribe(settings_update_handler, NULL);
 }
 
 static void window_unload(Window *window) {
     log_func();
-    tick_timer_service_unsubscribe();
+    enamel_settings_received_unsubscribe(s_settings_event_handle);
+    if (s_tick_timer_event_handle) {
+        events_tick_timer_service_unsubscribe(s_tick_timer_event_handle);
+    }
 
     players_layer_destroy(s_players_layer);
     status_bar_layer_destroy(s_status_bar_layer);
@@ -125,15 +134,15 @@ static void window_unload(Window *window) {
 static void focus_handler(bool focus) {
     log_func();
     if (focus) {
-        settings_add_listener(settings_update_listener, NULL);
+        settings_update_handler(NULL);
         app_focus_service_unsubscribe();
     }
 }
 
 static void init(void) {
     log_func();
-    s_settings = settings_init();
-    s_game_state = game_state_load(s_settings);
+    sync_init();
+    s_game_state = game_state_load();
 
     s_window = window_create();
     window_set_window_handlers(s_window, (WindowHandlers) {
@@ -153,7 +162,7 @@ static void deinit(void) {
     window_destroy(s_window);
 
     game_state_destroy(s_game_state);
-    settings_deinit();
+    sync_deinit();
 }
 
 int main(void) {

@@ -7,3 +7,5 @@ build
 # Ignore Visual Studio Code files
 .vscode
 
+
+node_modules/
