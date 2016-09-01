@@ -157,9 +157,32 @@ static void init(void) {
     window_stack_push(s_window, true);
 }
 
+#if PBL_API_EXISTS(app_glance_reload)
+static void app_glance_reload_callback(AppGlanceReloadSession *session, size_t limit, void *context) {
+    log_func();
+    if (limit > 0) {
+        size_t needed = snprintf(NULL, 0, "%s: %d - %s: %d", enamel_get_PlayerOneName(), s_game_state->life_totals[0], enamel_get_PlayerTwoName(), s_game_state->life_totals[1]);
+        char *buffer = malloc(needed + 1);
+        snprintf(buffer, needed + 1, "%s: %d - %s: %d", enamel_get_PlayerOneName(), s_game_state->life_totals[0], enamel_get_PlayerTwoName(), s_game_state->life_totals[1]);
+
+        AppGlanceSlice slice = {
+            .layout = {
+                .subtitle_template_string = buffer
+            },
+            .expiration_time = APP_GLANCE_SLICE_NO_EXPIRATION
+        };
+        app_glance_add_slice(session, slice);
+    }
+}
+#endif
+
 static void deinit(void) {
     log_func();
     window_destroy(s_window);
+
+#if PBL_API_EXISTS(app_glance_reload)
+    app_glance_reload(app_glance_reload_callback, NULL);
+#endif
 
     game_state_destroy(s_game_state);
     sync_deinit();
